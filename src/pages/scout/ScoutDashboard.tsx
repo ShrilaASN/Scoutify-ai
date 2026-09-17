@@ -196,21 +196,23 @@ export default function ScoutDashboard() {
   return (
     <AppShell
       role="scout"
-      title="Talent Search"
-      subtitle="Every registered athlete, benchmarked and ranked against national norms."
+      title="Scout Desk"
+      subtitle="A live, benchmarked view of every assessed athlete — search, filter, and work the shortlist."
     >
-      {/* Summary stats */}
+      {/* Operations summary */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard icon={<Users className="size-5" />} label="Total athletes" value={loading ? "—" : summary.total} sub="Across 5 regions" />
-        <StatCard icon={<Flame className="size-5" />} label="Flagged this month" value={loading ? "—" : summary.flaggedThisMonth} sub="Top 15% performances" tone="dark" />
-        <StatCard icon={<Radar className="size-5" />} label="Avg percentile" value={loading ? "—" : `${summary.avgPercentile}th`} sub="All recorded tests" />
+        <StatCard icon={<Users className="size-5" />} label="Athletes in the pool" value={loading ? "—" : summary.total} sub="Assessed across five regions" />
+        <StatCard icon={<Flame className="size-5" />} label="Flagged this month" value={loading ? "—" : summary.flaggedThisMonth} sub="New top-15% performers" tone="dark" />
+        <StatCard icon={<Radar className="size-5" />} label="Average percentile" value={loading ? "—" : `${summary.avgPercentile}th`} sub="Across all filed assessments" />
       </div>
 
       {/* Region heatmap grid */}
       <Card className="mt-6 border-border/70">
         <CardContent className="p-6">
-          <p className="font-display font-semibold">Region heatmap</p>
-          <p className="mt-0.5 text-sm text-muted-foreground">Athletes tested vs scout-worthy flags per region.</p>
+          <p className="font-display font-semibold">Coverage map</p>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            Assessed athletes and top-15% flags per region — darker tiles signal where the talent pool is deepest.
+          </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-5">
             {regionStats.map((r) => {
               const intensity = r.athletes === 0 ? 0 : Math.min(1, r.flagged / Math.max(1, r.athletes * 0.5));
@@ -229,7 +231,7 @@ export default function ScoutDashboard() {
                   <p className="text-xs font-medium leading-tight text-muted-foreground">{r.region}</p>
                   <p className="mt-2 font-display text-2xl font-bold">{r.athletes}</p>
                   <p className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-emerald-700">
-                    <Flame className="size-3" /> {r.flagged} flagged
+                    <Flame className="size-3" /> {r.flagged} on the map
                   </p>
                 </div>
               );
@@ -288,7 +290,7 @@ export default function ScoutDashboard() {
               className={cn("rounded-full", flaggedOnly && "bg-emerald-600 hover:bg-emerald-700")}
               onClick={() => setFlaggedOnly((v) => !v)}
             >
-              <Flame className="size-4" /> Flagged only
+              <Flame className="size-4" /> On the map only
             </Button>
           </div>
         </CardContent>
@@ -304,7 +306,7 @@ export default function ScoutDashboard() {
           <EmptyState
             icon={<Radar className="size-5" />}
             title="No athletes match these filters"
-            description="Try clearing a filter or widening your search."
+            description="Widen a filter or clear the search — new assessments land on this desk in real time."
           />
         </div>
       ) : (
@@ -337,8 +339,8 @@ export default function ScoutDashboard() {
                         <div>
                           <p className="font-medium leading-tight">{r.name}</p>
                           {r.flagged && (
-                            <Badge className="mt-0.5 gap-1 rounded-full bg-emerald-500 text-white">
-                              <Flame className="size-3" /> Scout-worthy
+                            <Badge className="mt-0.5 gap-1 rounded-full bg-emerald-600 text-white">
+                              <Flame className="size-3" /> On the map
                             </Badge>
                           )}
                         </div>
@@ -353,7 +355,7 @@ export default function ScoutDashboard() {
                           {BAND_META[r.band].label}
                         </span>
                       ) : (
-                        <span className="text-xs text-muted-foreground">No tests</span>
+                        <span className="text-xs text-muted-foreground">Not assessed</span>
                       )}
                     </TableCell>
                     <TableCell className="font-display font-bold">{r.percentile != null ? `${Math.round(r.percentile)}th` : "—"}</TableCell>

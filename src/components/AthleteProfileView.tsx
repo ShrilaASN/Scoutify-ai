@@ -104,8 +104,8 @@ export function AthleteProfileView({
             <div className="flex flex-wrap items-center gap-2.5">
               <h2 className="font-display text-xl font-bold tracking-tight">{athlete.name}</h2>
               {isFlagged && (
-                <Badge className="gap-1 rounded-full bg-emerald-500 text-white">
-                  <Flame className="size-3" /> Scout-worthy
+                <Badge className="gap-1 rounded-full bg-emerald-600 text-white">
+                  <Flame className="size-3" /> On the scout map
                 </Badge>
               )}
             </div>
@@ -126,14 +126,14 @@ export function AthleteProfileView({
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard icon={<CalendarDays className="size-5" />} label="Tests recorded" value={tests.length} sub="Across all test types" />
+        <StatCard icon={<CalendarDays className="size-5" />} label="Assessments filed" value={tests.length} sub="Across all four test types" />
         <StatCard
           icon={<Activity className="size-5" />}
           label="Best percentile"
           value={best ? `${Math.round(best.percentile)}th` : "—"}
-          sub={best ? BAND_META[best.band].label : "No tests yet"}
+          sub={best ? BAND_META[best.band].label : "No results yet"}
         />
-        <StatCard icon={<Flame className="size-5" />} label="Scout flags" value={flaggedCount} sub="Top 15% performances" tone="dark" />
+        <StatCard icon={<Flame className="size-5" />} label="Scout attention" value={flaggedCount} sub="Top-15% performances" tone="dark" />
       </div>
 
       {/* Test history tabs */}
@@ -160,7 +160,7 @@ export function AthleteProfileView({
                 <TabsContent key={tt} value={tt} className="mt-5">
                   {rows.length === 0 ? (
                     <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-                      No {meta.label} tests recorded yet.
+                      No {meta.label} results on file yet.
                     </p>
                   ) : (
                     <>
@@ -186,7 +186,7 @@ export function AthleteProfileView({
                         </ResponsiveContainer>
                       </div>
                       <p className="mt-1 text-center text-xs text-muted-foreground">
-                        {meta.label} over time · {tt === "sprint_40m" || tt === "shuttle_run" ? "lower is better" : "higher is better"}
+                        {meta.label} across every assessment · {tt === "sprint_40m" || tt === "shuttle_run" ? "lower time is better" : "higher is better"}
                       </p>
 
                       <div className="mt-5 space-y-2">
@@ -196,12 +196,12 @@ export function AthleteProfileView({
                             <div key={t._id} className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-border/70 px-4 py-3">
                               <div className="flex items-center gap-3">
                                 <span className="font-display text-lg font-bold">{formatScore(t.rawScore, t.unit)}</span>
-                                <span className={cn("rounded-full px-2 py-0.5 text-xs font-semibold", band.bg, band.text)}>
+                                <span className={cn("rounded-full px-2.5 py-0.5 text-xs font-semibold", band.bg, band.text)}>
                                   {band.label}
                                 </span>
                                 {t.isFlagged && (
-                                  <Badge className="gap-1 rounded-full bg-emerald-500 text-white">
-                                    <Flame className="size-3" /> Flagged
+                                  <Badge className="gap-1 rounded-full bg-emerald-600 text-white">
+                                    <Flame className="size-3" /> Scout attention
                                   </Badge>
                                 )}
                               </div>
@@ -223,8 +223,10 @@ export function AthleteProfileView({
       {showRegionalComparison && allTests !== undefined && allTests.length > 0 && (
         <Card className="border-border/70">
           <CardContent className="p-6">
-            <p className="font-display font-semibold">How you compare · {athlete.region}</p>
-            <p className="mt-0.5 text-sm text-muted-foreground">Average percentile per test — you vs everyone in your region.</p>
+            <p className="font-display font-semibold">Where you stand · {athlete.region}</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              Average percentile per test — you against every assessed athlete in your region.
+            </p>
             <div className="mt-4 h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={regionalData} margin={{ top: 8, right: 12, bottom: 0, left: -18 }}>

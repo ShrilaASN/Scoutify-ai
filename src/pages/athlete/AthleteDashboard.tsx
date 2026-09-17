@@ -24,8 +24,8 @@ export default function AthleteDashboard() {
   return (
     <AppShell
       role="athlete"
-      title={profile ? `Keep pushing, ${profile.name.split(" ")[0]}!` : "My Dashboard"}
-      subtitle="Your AI-scored progress, benchmarks and regional standing."
+      title={profile ? `Keep pushing, ${profile.name.split(" ")[0]}` : "My Dashboard"}
+      subtitle="Your performance record — every assessment, benchmark, and regional standing."
     >
       {profile === undefined ? (
         <p className="text-sm text-muted-foreground">Loading your profile…</p>
@@ -33,7 +33,7 @@ export default function AthleteDashboard() {
         <EmptyState
           icon={<Trophy className="size-5" />}
           title="No athlete profile linked yet"
-          description="Ask your coach to register you, or explore the leaderboard to see how top athletes in each region are performing."
+          description="Once your coach registers you, your assessments, benchmarks, and regional standing appear here automatically. Meanwhile, browse the leaderboard to see the standard at the top."
           action={
             <Button asChild className="rounded-full">
               <Link to="/leaderboard">Browse the leaderboard</Link>

@@ -50,7 +50,7 @@ const schema = defineSchema(
 
       role: v.optional(roleValidator), // role of the user. do not remove
 
-      // TalentLens role (app-level): coach | athlete | scout
+      // Scoutify AI role (app-level): coach | athlete | scout
       appRole: v.optional(v.union(v.literal("coach"), v.literal("athlete"), v.literal("scout"))),
     }).index("email", ["email"]), // index for the email. do not remove or modify
 

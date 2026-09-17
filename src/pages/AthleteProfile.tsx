@@ -26,10 +26,10 @@ export default function AthleteProfilePage() {
         <EmptyState
           icon={<UserX className="size-5" />}
           title="Athlete not found"
-          description="This athlete profile doesn't exist or was removed."
+          description="This profile doesn't exist or was removed from the roster."
           action={
             <Button asChild variant="outline" className="rounded-full">
-              <Link to="/coach/dashboard">Back to dashboard</Link>
+              <Link to="/coach/dashboard">Back to your desk</Link>
             </Button>
           }
         />

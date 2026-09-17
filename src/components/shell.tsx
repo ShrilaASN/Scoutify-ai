@@ -37,7 +37,7 @@ const NAV_BY_ROLE: Record<AppRole, { to: string; label: string; icon: ReactNode 
     { to: "/leaderboard", label: "Leaderboard", icon: <Trophy className="size-4" /> },
   ],
   scout: [
-    { to: "/scout/dashboard", label: "Talent Search", icon: <Radar className="size-4" /> },
+    { to: "/scout/dashboard", label: "Scout Desk", icon: <Radar className="size-4" /> },
     { to: "/leaderboard", label: "Leaderboard", icon: <Trophy className="size-4" /> },
   ],
 };
@@ -55,7 +55,7 @@ function LogoMark() {
         <Activity className="size-5" />
       </span>
       <span className="font-display text-lg font-bold tracking-tight">
-        Talent<span className="text-primary">Lens</span>
+        Scoutify<span className="tl-gradient-text"> AI</span>
       </span>
     </span>
   );

@@ -54,7 +54,7 @@ export default function Leaderboard() {
       role="coach"
       publicNav
       title="Leaderboard"
-      subtitle="Best performances per test type and age group — updated live."
+      subtitle="The national standard, test by test — every result here was measured, not estimated."
     >
       {/* Filters */}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -100,7 +100,7 @@ export default function Leaderboard() {
           <EmptyState
             icon={<Trophy className="size-5" />}
             title="No results here yet"
-            description="Once coaches record tests for this combination, the best performances will appear here."
+            description="Once coaches file assessments for this test and age group, the leading performances appear here automatically."
           />
         </div>
       ) : (
@@ -177,8 +177,8 @@ export default function Leaderboard() {
                       {band.label}
                     </span>
                     {t.isFlagged && (
-                      <Badge className="hidden gap-1 rounded-full bg-emerald-500 text-white sm:inline-flex">
-                        <Flame className="size-3" /> Flagged
+                      <Badge className="hidden gap-1 rounded-full bg-emerald-600 text-white sm:inline-flex">
+                        <Flame className="size-3" /> On the map
                       </Badge>
                     )}
                     <span className="font-display text-lg font-bold">{formatScore(t.rawScore, t.unit)}</span>
@@ -190,7 +190,7 @@ export default function Leaderboard() {
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
             Rankings use each athlete's latest {TEST_META[testType].label} result ·{" "}
-            {LOWER_IS_BETTER[testType] ? "lower time is better" : "higher is better"}
+            {LOWER_IS_BETTER[testType] ? "lower time is better" : "higher is better"} · updated live as coaches file results
           </p>
         </>
       )}

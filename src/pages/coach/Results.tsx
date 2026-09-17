@@ -8,8 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { TestType } from "@/lib/constants";
 import { LOWER_IS_BETTER, TEST_META } from "@/lib/constants";
 import { BAND_META, computePercentileClient, formatScore } from "@/lib/ui-helpers";
+import { Textarea } from "@/components/ui/textarea";
 import { useMutation, useQuery } from "convex/react";
-import { ArrowLeft, CheckCircle2, Flame, PartyPopper, RotateCcw, Trophy } from "lucide-react";
+import { ArrowLeft, CheckCircle2, FileText, Flame, PartyPopper, RotateCcw, Trophy } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
@@ -51,6 +52,7 @@ export default function Results() {
 
   const [savedId, setSavedId] = useState<string | null>(pendingId ? null : (testId ?? null));
   const [isSaving, setIsSaving] = useState(false);
+  const [notes, setNotes] = useState("");
 
   // Saved-result lookup (deep link to an already-saved test)
   const savedTest = useQuery(
@@ -115,14 +117,9 @@ export default function Results() {
         athleteId: state.athleteId as never,
         testType: state.testType,
         rawScore: state.rawScore,
+        notes: notes.trim() ? notes.trim() : undefined,
       });
       setSavedId(res.testId);
-      toast.success("Result saved to the athlete profile", {
-        description: res.isFlagged
-          ? "Scout-worthy performance — flagged for recruiters!"
-          : "The athlete can see this on their dashboard.",
-      });
-      navigate(`/athlete/${state.athleteId}`, { replace: true });
     } catch (err) {
       console.error(err);
       toast.error("Could not save the result. Please try again.");
@@ -132,6 +129,10 @@ export default function Results() {
 
   const athlete = pendingId ? previewAthlete : savedAthlete;
   const testMeta = TEST_META[(pendingId ? state?.testType : savedTest?.testType) ?? "vertical_jump"];
+
+  const saveAndFile = () => {
+    handleSave().catch(() => setIsSaving(false));
+  };
 
   if (!pendingId && savedTest === undefined) {
     return (
@@ -195,13 +196,14 @@ export default function Results() {
         {/* Flag banner */}
         {isFlagged && (
           <div className="flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-            <span className="grid size-10 place-items-center rounded-xl bg-emerald-500 text-white">
+            <span className="grid size-10 place-items-center rounded-xl bg-emerald-600 text-white">
               <Flame className="size-5" />
             </span>
             <div>
-              <p className="font-display font-semibold text-emerald-800">Scout-worthy!</p>
+              <p className="font-display font-semibold text-emerald-800">Flagged for scout attention</p>
               <p className="text-sm text-emerald-700">
-                This performance lands in the top 15% — the athlete will be flagged on the scout dashboard.
+                This performance ranks in the top 15% nationally — scouts reviewing this region will see this
+                athlete on their desk.
               </p>
             </div>
             <PartyPopper className="ml-auto hidden size-5 text-emerald-600 sm:block" />
@@ -217,7 +219,7 @@ export default function Results() {
                 {band.label} for {athlete.age}y {athlete.gender === "male" ? "male" : "female"}
               </Badge>
               <p className="mt-2 text-center text-xs text-muted-foreground">
-                Better than {Math.round(computed.percentile)}% of athletes in this age-gender group
+                Ahead of {Math.round(computed.percentile)}% of assessed athletes in this age-gender group
               </p>
             </CardContent>
           </Card>
@@ -225,7 +227,7 @@ export default function Results() {
           {/* Benchmark cutoffs + AI details */}
           <Card className="border-border/70">
             <CardContent className="p-6">
-              <p className="text-sm font-semibold">Benchmark cutoffs · {testMeta.label}</p>
+              <p className="text-sm font-semibold">National benchmark cutoffs · {testMeta.label}</p>
               <div className="mt-3 space-y-2.5 text-sm">
                 {[
                   { label: "Top 15%", value: norm?.percentile15Cutoff, tone: "text-emerald-700" },
@@ -270,27 +272,51 @@ export default function Results() {
               <div className="mt-5 flex items-start gap-2.5 rounded-xl bg-muted/60 p-3 text-xs leading-5 text-muted-foreground">
                 <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-secondary" />
                 {isLowerBetter
-                  ? "For timed tests, lower is better — the AI flags performances under the top-15% cutoff."
-                  : "For jump and rep tests, higher is better — the AI flags performances above the top-15% cutoff."}
+                  ? "For timed tests a lower number is better — flags are raised under the top-15% cutoff."
+                  : "For jump and repetition tests a higher number is better — flags are raised above the top-15% cutoff."}
               </div>
             </CardContent>
           </Card>
         </div>
 
+        {/* Assessment note (filed with the result) */}
+        <Card className="border-border/70">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold">Assessment note</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  Optional context filed with this result — conditions, effort, or technique observations for the
+                  athlete's record.
+                </p>
+              </div>
+              <FileText className="size-4 shrink-0 text-muted-foreground" />
+            </div>
+            <Textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="e.g. Tested on grass after morning drills; strong final 10m drive."
+              className="mt-3 min-h-20 resize-none"
+              maxLength={280}
+            />
+            <p className="mt-1.5 text-right text-[11px] text-muted-foreground">{notes.length}/280</p>
+          </CardContent>
+        </Card>
+
         {/* Actions */}
         <div className="flex flex-col gap-2.5 sm:flex-row">
           {pendingId ? (
             <>
-              <Button className="flex-1 rounded-full" onClick={handleSave} disabled={isSaving}>
-                {isSaving ? "Saving…" : "Save result"}
+              <Button className="flex-1 rounded-full shadow-md shadow-primary/25" onClick={saveAndFile} disabled={isSaving}>
+                {isSaving ? "Filing…" : "File result to profile"}
               </Button>
               <Button asChild variant="outline" className="rounded-full">
                 <Link to="/coach/test/record">
-                  <RotateCcw className="mr-2 size-4" /> Record another test
+                  <RotateCcw className="mr-2 size-4" /> Record another
                 </Link>
               </Button>
               <Button asChild variant="ghost" className="rounded-full">
-                <Link to={`/athlete/${athleteId}`}>View athlete profile</Link>
+                <Link to={`/athlete/${athleteId}`}>View profile</Link>
               </Button>
             </>
           ) : (
@@ -302,13 +328,13 @@ export default function Results() {
               </Button>
               <Button asChild variant="outline" className="rounded-full">
                 <Link to="/coach/test/record">
-                  <RotateCcw className="mr-2 size-4" /> Record another test
+                  <RotateCcw className="mr-2 size-4" /> Record another
                 </Link>
               </Button>
             </>
           )}
         </div>
-        {savedId && pendingId && <p className="text-center text-xs text-muted-foreground">Saved as test {savedId}</p>}
+        {savedId && pendingId && <p className="text-center text-xs text-muted-foreground">Result filed to the athlete's record.</p>}
       </div>
     </AppShell>
   );

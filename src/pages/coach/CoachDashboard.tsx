@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BAND_META, BAND_ORDER, formatScore, formatWhen } from "@/lib/ui-helpers";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
-import { ClipboardList, Flame, MapPin, Plus, Users, UserPlus } from "lucide-react";
+import { ClipboardList, Flame, MapPin, Plus, Users, UserPlus, Upload } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 
 export default function CoachDashboard() {
@@ -30,18 +30,23 @@ export default function CoachDashboard() {
   return (
     <AppShell
       role="coach"
-      title={`Namaste, ${user?.name?.split(" ")[0] ?? "Coach"} 👋`}
-      subtitle="Your rural talent pipeline at a glance."
+      title={`Welcome back, ${user?.name?.split(" ")[0] ?? "Coach"}`}
+      subtitle="Your desk at a glance — roster, assessed sessions, and athletes drawing scout attention."
       actions={
         <>
           <Button asChild variant="outline" className="rounded-full">
             <Link to="/coach/athletes/new">
-              <UserPlus className="size-4" /> Add Athlete
+              <UserPlus className="size-4" /> Add athlete
             </Link>
           </Button>
-          <Button asChild className="rounded-full">
+          <Button asChild variant="outline" className="rounded-full">
+            <Link to="/coach/test/record?mode=upload">
+              <Upload className="size-4" /> Upload footage
+            </Link>
+          </Button>
+          <Button asChild className="rounded-full shadow-md shadow-primary/25">
             <Link to="/coach/test/record">
-              <Plus className="size-4" /> Record New Test
+              <Plus className="size-4" /> Record test
             </Link>
           </Button>
         </>
@@ -49,16 +54,16 @@ export default function CoachDashboard() {
     >
       {/* Quick stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard icon={<Users className="size-5" />} label="Athletes registered" value={loading ? "—" : athletes!.length} sub="Across all regions" />
-        <StatCard icon={<ClipboardList className="size-5" />} label="Tests this month" value={loading ? "—" : testsThisMonth.length} sub="AI-scored automatically" />
-        <StatCard icon={<Flame className="size-5" />} label="Flagged athletes" value={loading ? "—" : flaggedIds.size} sub="Top 15% — scout-worthy" tone="dark" />
+        <StatCard icon={<Users className="size-5" />} label="Athletes on your roster" value={loading ? "—" : athletes!.length} sub="Profiles with at least one assessment" />
+        <StatCard icon={<ClipboardList className="size-5" />} label="Assessments this month" value={loading ? "—" : testsThisMonth.length} sub="Recorded and scored automatically" />
+        <StatCard icon={<Flame className="size-5" />} label="Drawing scout attention" value={loading ? "—" : flaggedIds.size} sub="Top-15% performers, flagged automatically" tone="dark" />
       </div>
 
       {/* Athletes */}
       <div className="mt-10 flex items-center justify-between">
-        <h2 className="font-display text-lg font-semibold">Your athletes</h2>
+        <h2 className="font-display text-lg font-semibold">Your roster</h2>
         <Link to="/coach/athletes/new" className="text-sm font-medium text-primary hover:underline">
-          + Add new
+          + Add athlete
         </Link>
       </div>
 
@@ -72,8 +77,8 @@ export default function CoachDashboard() {
         <div className="mt-4">
           <EmptyState
             icon={<Users className="size-5" />}
-            title="No athletes yet"
-            description="Register your first athlete to start recording AI-scored fitness tests."
+            title="Your roster is empty"
+            description="Register your first athlete and run their baseline assessment — the performance signal starts accumulating from day one."
             action={
               <Button asChild className="rounded-full">
                 <Link to="/coach/athletes/new">
@@ -115,8 +120,8 @@ export default function CoachDashboard() {
                       </div>
                     </div>
                     {a._id && flaggedIds.has(a._id) && (
-                      <Badge className="gap-1 rounded-full bg-emerald-500 text-white">
-                        <Flame className="size-3" /> Flagged
+                      <Badge className="gap-1 rounded-full bg-emerald-600 text-white">
+                        <Flame className="size-3" /> Scout attention
                       </Badge>
                     )}
                   </div>
@@ -133,7 +138,7 @@ export default function CoachDashboard() {
                     )}
                     {lastTest && (
                       <span className="text-xs text-muted-foreground">
-                        Last: {TEST_META[lastTest.testType as TestType].short} {formatScore(lastTest.rawScore, lastTest.unit)} · {formatWhen(lastTest.recordedAt)}
+                        Latest: {TEST_META[lastTest.testType as TestType].short} {formatScore(lastTest.rawScore, lastTest.unit)} · {formatWhen(lastTest.recordedAt)}
                       </span>
                     )}
                   </div>

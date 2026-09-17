@@ -1,11 +1,11 @@
 {
-  "name": "freebuff.com application",
-  "short_name": "freebuff.com",
-  "description": "freebuff.com application",
+  "name": "Scoutify AI",
+  "short_name": "Scoutify AI",
+  "description": "The pocket-sized scouting desk for coaches — record a few simple tests, get a fair performance signal, and put overlooked athletes on the map.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#F7F9FC",
+  "theme_color": "#0D1B2A",
   "icons": [
     {
       "src": "/logo.png",

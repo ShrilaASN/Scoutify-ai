@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import logo from "@/assets/logo.svg";
-import { Activity, ArrowRight, GraduationCap, Loader2, Radar, ScanLine, Trophy, UserX } from "lucide-react";
+import { Activity, ArrowRight, GraduationCap, Loader2, Radar, ScanLine, Trophy, Upload, UserX } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,8 @@ const ROLE_OPTIONS: { role: AppRole; label: string; icon: React.ReactNode }[] = 
   { role: "athlete", label: "Athlete", icon: <Trophy className="size-4" /> },
   { role: "scout", label: "Scout", icon: <Radar className="size-4" /> },
 ];
+
+const DEMO_PRELOAD = "30 athlete profiles and 90 assessed tests are pre-loaded for your demo.";
 
 function Auth({ redirectAfterAuth }: AuthProps = {}) {
   const { isLoading: authLoading, isAuthenticated, signIn } = useAuth();
@@ -104,29 +106,29 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
         </div>
         <div className="relative">
           <h2 className="font-display text-3xl font-bold leading-tight tracking-tight text-white">
-            Record. Score. Get scouted.
+            Your scouting desk, ready when you are.
           </h2>
           <p className="mt-3 max-w-sm text-sm leading-6 text-white/75">
-            The AI fitness assessor for rural and Tier-2 India — pose estimation on any phone, benchmarked
-            against national norms.
+            Scoutify AI gives every coach a pocket-sized scouting desk — record a few simple tests, get a
+            fair performance signal, and put overlooked athletes on the map.
           </p>
           <div className="mt-8 space-y-3 text-sm text-white/80">
-            <p className="flex items-center gap-2.5"><ScanLine className="size-4 text-orange-300" /> Live skeleton tracking during every test</p>
-            <p className="flex items-center gap-2.5"><Trophy className="size-4 text-orange-300" /> Percentile benchmarks, instant flags</p>
-            <p className="flex items-center gap-2.5"><Radar className="size-4 text-orange-300" /> Scout dashboard across all regions</p>
+            <p className="flex items-center gap-2.5"><ScanLine className="size-4 text-amber-300" /> Fair, benchmarked signals — not gut feel</p>
+            <p className="flex items-center gap-2.5"><Upload className="size-4 text-amber-300" /> Record live or upload footage after the fact</p>
+            <p className="flex items-center gap-2.5"><Trophy className="size-4 text-amber-300" /> Every result visible on the scout desk</p>
           </div>
         </div>
-        <p className="relative text-xs text-white/50">Demo data included · No credit card, no equipment</p>
+        <p className="relative text-xs text-white/50">Demo data included · No equipment purchase required</p>
       </div>
 
       {/* Right form panel */}
       <div className="flex flex-1 items-center justify-center px-4 py-10">
         <div className="w-full max-w-md">
           <div className="mb-6 flex items-center gap-3 lg:hidden">
-            <img src={logo} alt="TalentLens" className="size-10 rounded-lg" />
+            <img src={logo} alt="Scoutify AI" className="size-10 rounded-lg" />
             <div>
-              <p className="font-display font-bold leading-tight">TalentLens</p>
-              <p className="text-xs text-muted-foreground">AI sports talent identification</p>
+              <p className="font-display font-bold leading-tight">Scoutify AI</p>
+              <p className="text-xs text-muted-foreground">The pocket scouting desk for coaches</p>
             </div>
           </div>
 
@@ -134,8 +136,8 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
             {step === "signIn" ? (
               <>
                 <CardHeader>
-                  <CardTitle className="font-display text-xl">Sign in to TalentLens</CardTitle>
-                  <CardDescription>Choose your role, then sign in with email or a one-tap demo account.</CardDescription>
+                  <CardTitle className="font-display text-xl">Sign in to Scoutify AI</CardTitle>
+                  <CardDescription>Choose how you work, then continue with a demo desk or your email.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-5">
                   {/* Role selector */}
@@ -160,9 +162,14 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
 
                   {/* One-tap demo accounts */}
                   <div className="rounded-xl border border-primary/25 bg-primary/5 p-3.5">
-                    <p className="text-xs font-semibold">Quick demo access</p>
+                    <p className="text-xs font-semibold">Explore with a demo desk</p>
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      Jump straight into the {role} experience — pre-loaded with 30 athletes and 90 test results.
+                      {role === "coach"
+                        ? "Step into a coach's desk"
+                        : role === "athlete"
+                          ? "Step into an athlete's view"
+                          : "Step into the scout desk"}
+                      {" "}— {DEMO_PRELOAD}
                     </p>
                     <Button
                       type="button"
@@ -239,7 +246,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
               </>
             )}
             <div className="rounded-b-2xl border-t border-border/70 bg-muted/50 px-6 py-3 text-center text-xs text-muted-foreground">
-              Secured by Convex Auth · Guest access available
+              Demo environment · Your data stays on this deployment
             </div>
           </Card>
 

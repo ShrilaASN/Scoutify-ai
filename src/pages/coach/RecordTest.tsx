@@ -72,6 +72,7 @@ export default function RecordTest() {
   const heightRef = useRef<number | undefined>(undefined);
 
   const tt = (testType ?? "vertical_jump") as TestType;
+  const isUploadEntry = searchParams.get("mode") === "upload";
 
   const stopCamera = useCallback(() => {
     cancelAnimationFrame(rafRef.current);
@@ -274,16 +275,16 @@ export default function RecordTest() {
 
   if (phase === "processing") {
     return (
-      <AppShell role="coach" title="Analyzing movement…" subtitle="The AI is scoring the test — this takes a moment.">
+      <AppShell role="coach"      title="Scoring in progress…" subtitle="The engine is analyzing the capture — this takes a moment.">
         <div className="grid place-items-center rounded-2xl border border-border/70 bg-card px-6 py-20 text-center">
           <div className="relative">
             <Loader2 className="size-12 animate-spin text-primary" />
             <ScanLine className="absolute -right-2 -top-2 size-5 text-secondary" />
           </div>
-          <p className="mt-6 font-display text-lg font-semibold">Running pose analysis</p>
+          <p className="mt-6 font-display text-lg font-semibold">Analyzing movement</p>
           <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-            Tracking the skeleton across {framesSeen} captured frames, computing the score and comparing it with
-            national benchmarks for age {selectedAthlete?.age ?? "—"}.
+            Tracking the skeleton across {framesSeen} frames, computing the performance signal, and comparing it
+            against age-{selectedAthlete?.age ?? ""} benchmarks.
           </p>
         </div>
       </AppShell>
@@ -293,8 +294,8 @@ export default function RecordTest() {
   return (
     <AppShell
       role="coach"
-      title="Record New Test"
-      subtitle="Standardized capture — the AI handles scoring and benchmarking."
+      title="New Assessment"
+      subtitle="Standardized capture — Scoutify measures, benchmarks, and files the result."
     >
       {phase === "select" ? (
         <div className="mx-auto max-w-3xl space-y-5">
@@ -308,7 +309,7 @@ export default function RecordTest() {
           <Card className="border-border/70 shadow-sm">
             <CardContent className="space-y-6 p-6">
               <div>
-                <p className="mb-2 text-sm font-semibold">1 · Select athlete</p>
+                <p className="mb-2 text-sm font-semibold">Step 1 · Select athlete</p>
                 {!athletes ? (
                   <Skeleton className="h-10 w-full rounded-xl" />
                 ) : athletes.length === 0 ? (
@@ -336,7 +337,7 @@ export default function RecordTest() {
               </div>
 
               <div>
-                <p className="mb-2 text-sm font-semibold">2 · Choose test</p>
+                <p className="mb-2 text-sm font-semibold">Step 2 · Choose the test</p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {TEST_TYPES.map((type) => {
                     const meta = TEST_META[type];
@@ -433,6 +434,12 @@ export default function RecordTest() {
                   </div>
                 </div>
               )}
+              {cameraState === "idle" && isUploadEntry && (
+                <div className="absolute inset-x-0 bottom-0 border-t border-white/10 bg-black/40 px-4 py-3 text-center text-xs text-white/70 backdrop-blur-sm">
+                  Prefer to work from footage you already have? Upload support is on the capture roadmap — recording
+                  today produces the identical scored result.
+                </div>
+              )}
               {cameraState === "starting" && (
                 <div className="absolute inset-0 grid place-items-center bg-secondary/95 text-center text-white">
                   <div>
@@ -492,16 +499,16 @@ export default function RecordTest() {
           </Card>
 
           <div className="rounded-2xl border border-border/70 bg-muted/40 p-4 text-sm text-muted-foreground">
-            <p className="font-medium text-foreground">How scoring works</p>
+            <p className="font-medium text-foreground">How this test is measured</p>
             <p className="mt-1 leading-6">
               {testType === "vertical_jump" &&
-                "The AI tracks the athlete's hip through the crouch and jump; the highest hip rise is converted to centimetres using their height."}
+                "The engine tracks the athlete's hip through the crouch and jump, then converts peak hip rise to centimetres using the athlete's recorded height."}
               {testType === "situps_30s" &&
-                "The AI measures the shoulder→hip→knee torso angle each frame and counts complete up-down cycles in 30 seconds."}
+                "The engine measures the shoulder–hip–knee torso angle on every frame and counts complete up-down cycles within the 30-second window."}
               {testType === "sprint_40m" &&
-                "Timing runs across the capture window while the AI tracks body movement — the measured phase becomes the sprint time."}
+                "Timing runs across the capture window while the engine tracks body movement — the measured phase becomes the sprint time."}
               {testType === "shuttle_run" &&
-                "The AI times the movement phase across the shuttle course; turn pauses are automatically discounted."}
+                "The engine times the movement phase across the shuttle course and automatically discounts pauses at the turn lines."}
             </p>
           </div>
         </div>
